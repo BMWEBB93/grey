@@ -6,7 +6,7 @@
 #include "GameFramework/Character.h"
 #include "BaseCharacter.generated.h"
 
-UCLASS()
+UCLASS(Abstract)
 class GREY_API ABaseCharacter : public ACharacter
 {
 	GENERATED_BODY()
@@ -19,11 +19,24 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	// stats
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category= "Stats")
+	float MaxHealth;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Stats")
+	float CurrentHealth;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Stats")
+	bool bIsDead;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	UFUNCTION(BlueprintCallable)
+	virtual void TakeDamage(float DamageAmount);
+
+	UFUNCTION(BlueprintCallable)
+	virtual void Heal(float HealAmount);
 
 };

@@ -9,6 +9,9 @@ ABaseCharacter::ABaseCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	MaxHealth = 100.f;
+	CurrentHealth = MaxHealth;
+
 }
 
 // Called when the game starts or when spawned
@@ -22,13 +25,17 @@ void ABaseCharacter::BeginPlay()
 void ABaseCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
-// Called to bind functionality to input
-void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+
+void ABaseCharacter::TakeDamage(float DamageAmount)
 {
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
+	CurrentHealth -= DamageAmount;
+	if (CurrentHealth <= 0) CurrentHealth = 0; bIsDead = true;
 }
 
+void ABaseCharacter::Heal(float HealAmount)
+{
+	CurrentHealth += HealAmount; 
+	if (CurrentHealth > MaxHealth) CurrentHealth = MaxHealth;
+}
