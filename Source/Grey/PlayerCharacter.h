@@ -19,7 +19,7 @@ public:
 protected:
     virtual void BeginPlay() override;
 
-    // Input handlers
+    // Input Actions
     void Move(const FInputActionValue& Value);
     void Look(const FInputActionValue& Value);
 

@@ -8,7 +8,8 @@
 #include "GameFramework/Controller.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "EnhancedInputComponent.h"
-#include "EnhancedInputSubsystems.h"
+#include "InputAction.h"
+#include "InputActionValue.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -44,37 +45,27 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
     if (UEnhancedInputComponent* EIC = Cast<UEnhancedInputComponent>(PlayerInputComponent))
     {
-        EIC->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
+        EIC->BindAction(IA_Move, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
         EIC->BindAction(LookAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Look);
     }
 }
 
-void APlayerCharacter::MoveForward(float Value)
+void APlayerCharacter::Move(const FInputActionValue& Value)
 {
-    if (Controller && Value != 0.f)
-    {
-        const FRotator YawRotation(0.f, Controller->GetControlRotation().Yaw, 0.f);
-        const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-        AddMovementInput(Direction, Value);
-    }
+    const FVector2D MoveAxis = Value.Get<FVector2D>();
+
+    if (!Controller) return;
+
+    const FRotator YawRot(0.f, Controller->GetControlRotation().Yaw, 0.f);
+
+    AddMovementInput(FRotationMatrix(YawRot).GetUnitAxis(EAxis::X), MoveAxis.Y);
+    AddMovementInput(FRotationMatrix(YawRot).GetUnitAxis(EAxis::Y), MoveAxis.X);
 }
 
-void APlayerCharacter::MoveRight(float Value)
+void APlayerCharacter::Look(const FInputActionValue& Value)
 {
-    if (Controller && Value != 0.f)
-    {
-        const FRotator YawRotation(0.f, Controller->GetControlRotation().Yaw, 0.f);
-        const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-        AddMovementInput(Direction, Value);
-    }
-}
+    const FVector2D LookAxis = Value.Get<FVector2D>();
 
-void APlayerCharacter::Turn(float Value)
-{
-    AddControllerYawInput(Value);
-}
-
-void APlayerCharacter::LookUp(float Value)
-{
-    AddControllerPitchInput(Value);
+    AddControllerYawInput(LookAxis.X);
+    AddControllerPitchInput(-LookAxis.Y);
 }
