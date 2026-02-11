@@ -7,6 +7,8 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "EnhancedInputComponent.h"
+#include "EnhancedInputSubsystems.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -40,10 +42,11 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 {
     Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-    PlayerInputComponent->BindAxis("MoveForward", this, &APlayerCharacter::MoveForward);
-    PlayerInputComponent->BindAxis("MoveRight", this, &APlayerCharacter::MoveRight);
-    PlayerInputComponent->BindAxis("Turn", this, &APlayerCharacter::Turn);
-    PlayerInputComponent->BindAxis("LookUp", this, &APlayerCharacter::LookUp);
+    if (UEnhancedInputComponent* EIC = Cast<UEnhancedInputComponent>(PlayerInputComponent))
+    {
+        EIC->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
+        EIC->BindAction(LookAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Look);
+    }
 }
 
 void APlayerCharacter::MoveForward(float Value)
