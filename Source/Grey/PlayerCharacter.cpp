@@ -6,10 +6,12 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/Controller.h"
-#include "GameFramework/CharacterMovementComponent.h"
-#include "EnhancedInputComponent.h"
-#include "InputAction.h"
+
 #include "InputActionValue.h"
+#include "EnhancedInputSubsystems.h"
+#include "EnhancedInputComponent.h"
+#include "Components/InputComponent.h"
+
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -18,9 +20,11 @@ APlayerCharacter::APlayerCharacter()
 
     // Camera boom
     CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
-    CameraBoom->SetupAttachment(RootComponent);
-    CameraBoom->TargetArmLength = 300.f;
+    CameraBoom->SetupAttachment(GetMesh(),TEXT("HeadSocket"));
+    CameraBoom->TargetArmLength = 100.f;
     CameraBoom->bUsePawnControlRotation = true;
+    //CameraBoom->SetRelativeLocation(FVector::ZeroVector);
+
 
     // Camera
     FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
@@ -32,6 +36,16 @@ APlayerCharacter::APlayerCharacter()
 void APlayerCharacter::BeginPlay()
 {
     Super::BeginPlay();
+
+    // setup input mapping context
+    if (APlayerController* playerController = Cast<APlayerController>(Controller))
+    {	    
+        if (UEnhancedInputLocalPlayerSubsystem* subsystem = ULocalPlayer::GetSubsystem< UEnhancedInputLocalPlayerSubsystem>(playerController->GetLocalPlayer()))
+        {
+            subsystem->AddMappingContext(DefaultMappingContext, 0);
+        }
+    }
+	
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
@@ -39,22 +53,23 @@ void APlayerCharacter::Tick(float DeltaTime)
     Super::Tick(DeltaTime);
 }
 
-void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-    Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-    if (UEnhancedInputComponent* EIC = Cast<UEnhancedInputComponent>(PlayerInputComponent))
+
+void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
+{
+    // Set up action bindings
+    if (UEnhancedInputComponent* enhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
     {
-        EIC->BindAction(IA_Move, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
-        EIC->BindAction(LookAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Look);
+        enhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
+        enhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Look);
     }
 }
+
 
 void APlayerCharacter::Move(const FInputActionValue& Value)
 {
     const FVector2D MoveAxis = Value.Get<FVector2D>();
 
-    if (!Controller) return;
 
     const FRotator YawRot(0.f, Controller->GetControlRotation().Yaw, 0.f);
 
@@ -69,3 +84,4 @@ void APlayerCharacter::Look(const FInputActionValue& Value)
     AddControllerYawInput(LookAxis.X);
     AddControllerPitchInput(-LookAxis.Y);
 }
+

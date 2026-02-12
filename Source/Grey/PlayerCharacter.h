@@ -3,8 +3,11 @@
 
 #include "CoreMinimal.h"
 #include "BaseCharacter.h"
-#include "PlayerCharacter.generated.h"
+#include "InputAction.h"
 #include "InputActionValue.h"
+#include "PlayerCharacter.generated.h"
+
+
 
 
 UCLASS()
@@ -19,9 +22,16 @@ public:
 protected:
     virtual void BeginPlay() override;
 
-    // Input Actions
-    void Move(const FInputActionValue& Value);
-    void Look(const FInputActionValue& Value);
+    // Mapping context
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+    class UInputMappingContext* DefaultMappingContext;  
+
+    // Input actions
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+    UInputAction* MoveAction;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+    UInputAction* LookAction;
 
 
 	// Camera boom (spring arm)
@@ -34,5 +44,10 @@ protected:
 
 public:
     virtual void Tick(float DeltaTime) override;
+
     virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+    // Input Actions
+    void Move(const FInputActionValue& Value);
+    void Look(const FInputActionValue& Value);
 };
