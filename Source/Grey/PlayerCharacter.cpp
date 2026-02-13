@@ -2,15 +2,6 @@
 
 
 #include "PlayerCharacter.h"
-#include "BaseCharacter.h"
-#include "Camera/CameraComponent.h"
-#include "GameFramework/SpringArmComponent.h"
-#include "GameFramework/Controller.h"
-
-#include "InputActionValue.h"
-#include "EnhancedInputSubsystems.h"
-#include "EnhancedInputComponent.h"
-#include "Components/InputComponent.h"
 
 
 APlayerCharacter::APlayerCharacter()
@@ -21,10 +12,11 @@ APlayerCharacter::APlayerCharacter()
     // Camera boom
     CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
     CameraBoom->SetupAttachment(GetMesh(),TEXT("HeadSocket"));
-    CameraBoom->TargetArmLength = 100.f;
+    CameraBoom->TargetArmLength = -40.f;
     CameraBoom->bUsePawnControlRotation = true;
-    //CameraBoom->SetRelativeLocation(FVector::ZeroVector);
+    CameraBoom->SetRelativeLocation(FVector::ZeroVector);
 
+   
 
     // Camera
     FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
@@ -46,11 +38,22 @@ void APlayerCharacter::BeginPlay()
         }
     }
 	
+   
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
+
+    // get movement direction for animation
+    FVector Velocity = GetVelocity();
+    FVector Forward = GetActorForwardVector();
+
+    float ForwardDot = FVector::DotProduct(Forward, Velocity);
+    float RightDot = FVector::DotProduct(GetActorRightVector(), Velocity);
+
+    movementDirection = FMath::Atan2(RightDot, ForwardDot) * (180.f / PI);
+
 }
 
 

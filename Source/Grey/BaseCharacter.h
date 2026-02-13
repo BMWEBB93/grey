@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "BaseCharacter.generated.h"
 
 UCLASS(Abstract)
@@ -28,6 +29,13 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Stats")
 	bool bIsDead;
+
+	// Animation Variables
+	UPROPERTY(BlueprintReadOnly, Category = "Animation")
+	float speed;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Animation")
+	bool bIsInAir;
 
 public:	
 	// Called every frame

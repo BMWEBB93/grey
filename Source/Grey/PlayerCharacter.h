@@ -3,8 +3,17 @@
 
 #include "CoreMinimal.h"
 #include "BaseCharacter.h"
+
+#include "Camera/CameraComponent.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "GameFramework/Controller.h"
+
 #include "InputAction.h"
 #include "InputActionValue.h"
+#include "EnhancedInputSubsystems.h"
+#include "EnhancedInputComponent.h"
+#include "Components/InputComponent.h"
+
 #include "PlayerCharacter.generated.h"
 
 
@@ -32,6 +41,15 @@ protected:
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
     UInputAction* LookAction;
+
+
+    // Animation variables
+    UPROPERTY(BlueprintReadOnly, Category = "Animation")
+    float lookPitch;
+
+    UPROPERTY(BlueprintReadOnly, Category = "Animation")
+    float movementDirection;
+
 
 
 	// Camera boom (spring arm)
