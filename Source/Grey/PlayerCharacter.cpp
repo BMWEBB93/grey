@@ -12,9 +12,10 @@ APlayerCharacter::APlayerCharacter()
     // Camera boom
     CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
     CameraBoom->SetupAttachment(GetMesh(),TEXT("HeadSocket"));
-    CameraBoom->TargetArmLength = -40.f;
-    CameraBoom->bUsePawnControlRotation = true;
+    CameraBoom->TargetArmLength = 40.f;
+    CameraBoom->bUsePawnControlRotation = false;
     CameraBoom->SetRelativeLocation(FVector::ZeroVector);
+    CameraBoom->SetRelativeRotation(FRotator(0.f, -90.f, 0.f));
 
    
 
@@ -22,6 +23,7 @@ APlayerCharacter::APlayerCharacter()
     FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
     FollowCamera->SetupAttachment(CameraBoom);
     FollowCamera->bUsePawnControlRotation = false;
+    FollowCamera->SetRelativeRotation(FRotator(0.f, 0.f, 0.f));
 
 }
 
@@ -54,6 +56,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 
     movementDirection = FMath::Atan2(RightDot, ForwardDot) * (180.f / PI);
 
+    
 }
 
 
@@ -85,6 +88,13 @@ void APlayerCharacter::Look(const FInputActionValue& Value)
     const FVector2D LookAxis = Value.Get<FVector2D>();
 
     AddControllerYawInput(LookAxis.X);
-    AddControllerPitchInput(-LookAxis.Y);
+    //AddControllerPitchInput(-LookAxis.Y);
+
+    lookPitch += LookAxis.Y;
+
+    // lock between 60 and -60
+    if (lookPitch > 60) lookPitch = 60;
+	if (lookPitch < -60) lookPitch = -60;
+    
 }
 
