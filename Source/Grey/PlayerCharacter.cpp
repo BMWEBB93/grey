@@ -88,7 +88,6 @@ void APlayerCharacter::Look(const FInputActionValue& Value)
     const FVector2D LookAxis = Value.Get<FVector2D>();
 
     AddControllerYawInput(LookAxis.X);
-    //AddControllerPitchInput(-LookAxis.Y);
 
     lookPitch += LookAxis.Y;
 
