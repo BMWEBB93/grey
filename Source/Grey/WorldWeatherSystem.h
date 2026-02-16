@@ -2,8 +2,11 @@
 
 #pragma once
 
-#include "Engine/DirectionalLight.h"
+#include "NiagaraSystem.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
 #include "CoreMinimal.h"
+#include "PlayerCharacter.h"
 #include "Subsystems/WorldSubsystem.h"
 #include "WorldWeatherSystem.generated.h"
 
@@ -17,21 +20,25 @@ class GREY_API UWorldWeatherSystem : public UTickableWorldSubsystem
 	
 public:
 	virtual void Tick(float DeltaTime) override;
+	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual TStatId GetStatId() const override;
 
 	// Time variables
-	float Seconds; 
-	int32 Minutes;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TimeOfDay");
+	float Hours = 0.f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "StartHour");
-	int32 Hours = 12.f;
+	// Player Reference
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player");
+	APlayerCharacter *Player;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TimeRate");
-	float TimeRate = 60.f;
+	// Weather 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Snow")
+	UNiagaraSystem* Snow;
 
-	// Sun/Lighting
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sun/Lighting")
-	ADirectionalLight* SunLight;
+	UPROPERTY()
+	UNiagaraComponent* SnowComp;
 
+
+	
 
 };
