@@ -19,6 +19,15 @@ void UWorldWeatherSystem::Tick(float DeltaTime)
         }
     }
 
+    if (SunLight)
+    {
+        float SunAngle = (Hours + Minutes / 60.f) * 15.f;
+        // 360° / 24 hours = 15° per hour
+
+        FRotator NewRotation = FRotator(SunAngle - 270.f, 0.f, 0.f);
+        SunLight->SetActorRotation(NewRotation);
+    }
+
     if (GEngine)
     {
         FString TimeString = FString::Printf(

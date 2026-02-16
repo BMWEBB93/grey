@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "Engine/DirectionalLight.h"
 #include "CoreMinimal.h"
 #include "Subsystems/WorldSubsystem.h"
 #include "WorldWeatherSystem.generated.h"
@@ -21,9 +22,16 @@ public:
 	// Time variables
 	float Seconds; 
 	int32 Minutes;
-	int32 Hours = 12.f; 
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "StartHour");
+	int32 Hours = 12.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TimeRate");
 	float TimeRate = 60.f;
+
+	// Sun/Lighting
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sun/Lighting")
+	ADirectionalLight* SunLight;
+
 
 };
